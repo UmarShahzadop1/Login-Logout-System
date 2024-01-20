@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration Form</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // JavaScript function for form validation
+        function validateForm() {
+            var cnicPattern = /^\d{5}-\d{7}-\d$/;
+            var phonePattern = /^\d{11}$/;
+
+            var cnic = document.forms["registrationForm"]["cnic"].value;
+            var phone = document.forms["registrationForm"]["cell_number"].value;
+
+            if (!cnicPattern.test(cnic)) {
+                alert("Enter CNIC in 12345-1234567-1 format");
+                return false;
+            }
+
+            if (!phonePattern.test(phone)) {
+                alert("Enter 11 digits for Cell Number");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <h2>Employee Registration Form</h2>
+
+    <form style="margin: 90px;" name="registrationForm" action="process_form.php" method="post" onsubmit="return validateForm()">
+        <label for="name">Name:</label>
+        <input type="text" name="name" required><br>
+
+        <label for="guardian_name">Guardian Name:</label>
+        <input type="text" name="guardian_name" required><br>
+
+        <label for="guardian_relation">Guardian Relation:</label>
+        <input type="text" name="guardian_relation" required><br>
+
+        <label for="gender">Gender:</label>
+        <select name="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select><br>
+
+        <label for="cnic">CNIC:</label>
+        <input type="text" name="cnic" pattern="\d{5}-\d{7}-\d" title="Enter CNIC in 12345-1234567-1 format" required><br>
+
+        <label for="address">Address:</label>
+        <textarea name="address" required></textarea><br>
+
+        <label for="city">City:</label>
+        <input type="text" name="city" required><br>
+
+        <label for="country">Country:</label>
+        <input type="text" name="country" required><br>
+
+        <label for="cell_number">Cell Number:</label>
+        <input type="tel" name="cell_number" pattern="\d{11}" title="Enter 11 digits" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required><br>
+
+        <label for="department">Department:</label>
+        <input type="text" name="department" required><br>
+
+        <label for="designation">Designation:</label>
+        <input type="text" name="designation" required><br>
+
+        <label for="salary">Salary:</label>
+        <input type="number" name="salary" required><br>
+
+        <label for="weekly_hours">Weekly Rest Hours:</label>
+        <input type="number" name="weekly_hours" required><br>
+
+        <button type="submit" name="save">Save Form</button>
+        <button type="submit" name="delete">Delete Form</button>
+        <button type="reset" name="new_form">New Form</button>
+    </form>
+
+    <?php
+    // PHP code for database connection and form data processing
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "employeemanagment"; // Corrected database name
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $name = $_POST["name"];
+        $guardian_name = $_POST["guardian_name"];
+        $guardian_relation = $_POST["guardian_relation"];
+        $gender = $_POST["gender"];
+        $cnic = $_POST["cnic"];
+        $address = $_POST["address"];
+        $city = $_POST["city"];
+        $country = $_POST["country"];
+        $cell_number = $_POST["cell_number"];
+        $email = $_POST["email"];
+        $department = $_POST["department"];
+        $designation = $_POST["designation"];
+        $salary = $_POST["salary"];
+        $weekly_hours = $_POST["weekly_hours"];
+
+        $sql = "INSERT INTO employees (Name, GuardianName, GuardianRelation, Gender, CNIC, Address, City, Country, CellNumber, Email, Department, Designation, Salary, WeeklyRestHours)
+                VALUES ('$name', '$guardian_name', '$guardian_relation', '$gender', '$cnic', '$address', '$city', '$country', '$cell_number', '$email', '$department', '$designation', '$salary', '$weekly_hours')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Record inserted successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
+
+    $conn->close();
+    ?>
+
+</body>
+</html>
